@@ -93,7 +93,7 @@ export const siteConfig: SiteConfig = {
       "I build scalable backend systems, real-time architectures, and event-driven platforms — with a focus on high-performance APIs, reliability under failure, and system design fundamentals. I also work with Web3 and blockchain, including Solana Web3.js, wallet integrations, Solidity basics, and Rust.",
     location: "Praygraj, India",
     age: 23,
-    avatar: "/avatar.svg",
+    avatar: "/profile.png",
     username: "Amitaarav",
   },
 

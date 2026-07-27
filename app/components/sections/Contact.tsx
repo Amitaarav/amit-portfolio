@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Twitter, Mail, Github, Calendar } from "lucide-react"
+import { Twitter, Mail, Github, Calendar, Linkedin } from "lucide-react"
 // Contact rows + headings come from /config/siteConfig.ts → contact.
 import { siteConfig, type ContactRow } from "@/config/siteConfig"
 
@@ -10,6 +10,7 @@ const ICONS = {
   calendar: <Calendar size={15} />,
   twitter:  <Twitter size={15} />,
   github:   <Github size={15} />,
+  linkedin: <Linkedin size={15} />,
 } as const
 
 export default function Contact({ compact = false }: { compact?: boolean }) {
