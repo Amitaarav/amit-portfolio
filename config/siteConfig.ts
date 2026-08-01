@@ -41,6 +41,12 @@ export interface Social {
   githubUsername: string
   /** Twitter/X handle, no @. */
   twitterHandle: string
+  linkedin: string
+  linkedinHandle: string
+  leetcode: string
+  leetcodeHandle: string
+  codeforces: string
+  codeforcesHandle: string
 }
 
 export interface ContactRow {
@@ -103,6 +109,12 @@ export const siteConfig: SiteConfig = {
     blog: "https://leetcode.com/amit_gupta_512",
     githubUsername: "Amitaarav",
     twitterHandle: "AmitAarav1205",
+    linkedin: "https://www.linkedin.com/in/amitkrgupta8",
+    linkedinHandle: "amitkrgupta8",
+    leetcode: "https://leetcode.com/u/amit_gupta_512/",
+    leetcodeHandle: "amit_gupta_512",
+    codeforces: "https://codeforces.com/profile/amitgupta556",
+    codeforcesHandle: "amitgupta556",
   },
 
   contact: {

@@ -1,7 +1,8 @@
 "use client"
 
 import Image from 'next/image'
-import { Twitter, Github, BookOpen } from 'lucide-react'
+import { Twitter, Github, BookOpen, Linkedin } from 'lucide-react'
+import { SiLeetcode, SiCodeforces } from "react-icons/si"
 // Text + social links come from /config/siteConfig.ts.
 import { siteConfig } from '@/config/siteConfig'
 
@@ -57,7 +58,9 @@ export default function Hero({ compact = false }: { compact?: boolean }) {
           {[
             { href: social.twitter, icon: <Twitter size={15} />, label: "X" },
             { href: social.github,  icon: <Github size={15} />,  label: "GitHub" },
-            { href: social.blog,    icon: <BookOpen size={15} />, label: "Blog" },
+            { href: social.linkedin, icon: <Linkedin size={15} />, label: "LinkedIn" },
+            { href: social.leetcode, icon: <SiLeetcode size={15} />, label: "LeetCode" },
+            { href: social.codeforces, icon: <SiCodeforces size={15} />, label: "Codeforces" },
           ].map(({ href, icon, label }) => (
             <a
               key={label}

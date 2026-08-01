@@ -1,7 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ExternalLink, MapPin, Mail, Github, Twitter } from "lucide-react"
+import { ExternalLink, MapPin, Mail, Github, Twitter, Linkedin, Code, Terminal } from "lucide-react"
+import { SiCodeforces, SiLeetcode } from "react-icons/si";
 // Résumé content is split across a few config modules — each maps 1:1 to a section below.
 import { siteConfig } from "@/config/siteConfig"
 import { skills } from "@/config/skills"
@@ -49,6 +50,30 @@ export default function Resume({ compact = false }: { compact?: boolean }) {
               className="flex items-center gap-1 text-[11px] text-[var(--text-muted)] hover:text-white transition-colors"
             >
               <Twitter size={10} /> {social.twitterHandle}
+            </a>
+            <a
+              href={social.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] text-[var(--text-muted)] hover:text-white transition-colors"
+            >
+              <Linkedin size={10} /> {social.linkedinHandle}
+            </a>
+            <a
+              href={social.leetcode}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] text-[var(--text-muted)] hover:text-white transition-colors"
+            >
+              <SiLeetcode size={10} /> {social.leetcodeHandle}
+            </a>
+            <a
+              href={social.codeforces}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] text-[var(--text-muted)] hover:text-white transition-colors"
+            >
+              <SiCodeforces size={10} /> {social.codeforcesHandle}
             </a>
           </div>
         </div>
@@ -201,7 +226,7 @@ export default function Resume({ compact = false }: { compact?: boolean }) {
             className="text-[11px] font-semibold uppercase tracking-widest mb-3"
             style={{ color: "var(--text-secondary)" }}
           >
-            Teaching
+            Achievements
           </h2>
           <ul className="space-y-1 pl-3">
             {teaching.map((t, i) => (
