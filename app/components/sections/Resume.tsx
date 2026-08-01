@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ExternalLink, MapPin, Mail, Github, Twitter, Linkedin, Code, Terminal } from "lucide-react"
+import { ExternalLink, MapPin, Mail, Github, Twitter, Linkedin } from "lucide-react"
 import { SiCodeforces, SiLeetcode } from "react-icons/si";
 // Résumé content is split across a few config modules — each maps 1:1 to a section below.
 import { siteConfig } from "@/config/siteConfig"

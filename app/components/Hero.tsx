@@ -1,7 +1,7 @@
 "use client"
 
 import Image from 'next/image'
-import { Twitter, Github, BookOpen, Linkedin } from 'lucide-react'
+import { Twitter, Github, Linkedin } from 'lucide-react'
 import { SiLeetcode, SiCodeforces } from "react-icons/si"
 // Text + social links come from /config/siteConfig.ts.
 import { siteConfig } from '@/config/siteConfig'
