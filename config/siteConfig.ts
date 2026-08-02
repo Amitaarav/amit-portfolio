@@ -94,11 +94,21 @@ export const siteConfig: SiteConfig = {
     fullName: "Amit Kumar Gupta",
     initials: "AK",
     role: "Full Stack & Backend Engineer",
-    shortRole: "Full Stack & Backend Engineer",
+    shortRole: "Full Stack & Backend Engineer · NIT Calicut '25",
     tagline:
-      "I build scalable backend systems, real-time architectures, and event-driven platforms — with a focus on high-performance APIs, reliability under failure, and system design fundamentals. I also work with Web3 and blockchain, including Solana Web3.js, wallet integrations, Solidity basics, and Rust.",
-    location: "Praygraj, India",
-    age: 23,
+      "Full-stack engineer with a backend bias — specializing in " +
+      "distributed systems, event-driven architecture, and high-throughput " +
+      "data pipelines. Shipped a crypto exchange matching engine at " +
+      "10K+ orders/sec, a Kafka-powered workflow engine at 100K+ events/day, " +
+      "and a P2P digital wallet stress-tested at 5,000+ concurrent " +
+      "transactions with zero data inconsistency. Served as founding " +
+      "engineer and tech lead at an early-stage marketplace startup, " +
+      "owning the full stack from database schema to deployment. " +
+      "Currently diving deeper into Rust and the Solana ecosystem — " +
+      "building on-chain integrations and learning the primitives " +
+      "underneath the abstractions.",
+    location: "Prayagraj, India",
+    age: 24,
     avatar: "/profile.png",
     username: "Amitaarav",
   },
@@ -106,7 +116,7 @@ export const siteConfig: SiteConfig = {
   social: {
     github: "https://github.com/Amitaarav",
     twitter: "https://x.com/AmitAarav1205",
-    blog: "https://leetcode.com/amit_gupta_512",
+    blog: "https://leetcode.com/u/amit_gupta_512/",
     githubUsername: "Amitaarav",
     twitterHandle: "AmitAarav1205",
     linkedin: "https://www.linkedin.com/in/amitkrgupta8",
@@ -121,20 +131,42 @@ export const siteConfig: SiteConfig = {
     email: "amitgupta.nitc@gmail.com",
     calendar: "https://cal.com/amitaarav",
     heading: "Let's Connect",
-    subheading: "Open to full stack and backend engineering roles, collaborations, and building something impactful together.",
+    subheading:
+      "Open to full-stack and backend engineering roles, " +
+      "collaborations, and building something impactful together.",
     rows: [
-      { icon: "mail",     href: "mailto:amitgupta.nitc@gmail.com",           label: "Email",           mono: "amitgupta.nitc@gmail.com" },
-      { icon: "github",   href: "https://github.com/Amitaarav",              label: "GitHub",          mono: "Amitaarav" },
-      { icon: "linkedin",  href: "https://www.linkedin.com/in/amitkrgupta8",  label: "LinkedIn",        mono: "in/amitkrgupta8" },
+      {
+        icon: "mail",
+        href: "mailto:amitgupta.nitc@gmail.com",
+        label: "Email",
+        mono: "amitgupta.nitc@gmail.com",
+      },
+      {
+        icon: "github",
+        href: "https://github.com/Amitaarav",
+        label: "GitHub",
+        mono: "Amitaarav",
+      },
+      {
+        icon: "linkedin",
+        href: "https://www.linkedin.com/in/amitkrgupta8",
+        label: "LinkedIn",
+        mono: "in/amitkrgupta8",
+      },
     ],
   },
 
   seo: {
-    title: "Amit Kumar Gupta",
-    description: "Full Stack & Backend Engineer building scalable distributed systems, real-time architectures, and event-driven platforms. NIT Calicut '25.",
+    title: "Amit Kumar Gupta — Full Stack & Backend Engineer",
+    description:
+      "Full Stack & Backend Engineer specializing in distributed systems, " +
+      "real-time architectures, and event-driven platforms. " +
+      "Built systems processing 100K+ events/day and 10K+ orders/sec. " +
+      "NIT Calicut '25.",
   },
 
-  resumeLink: "https://www.linkedin.com/in/amitkrgupta8",
+  resumeLink:
+    "https://drive.google.com/file/d/1xkX-Jd0rwaIs-uNFMOwU8iQdgvlvlyPO/view?usp=sharing",
 
   features: {
     konami: true,
