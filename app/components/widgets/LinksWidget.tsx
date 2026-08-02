@@ -21,7 +21,7 @@ export default function LinksWidget() {
       style={{ top: 228, left: 24, zIndex: 5, width: 240 }}
     >
       <div className="widget-handle" onPointerDown={(e) => dragControls.start(e)}>
-        <div style={{ width: 24, height: 2, borderRadius: 1, background: "rgba(255,255,255,0.12)" }} />
+        <div style={{ width: 28, height: 2, borderRadius: 1, background: "rgba(255,255,255,0.12)" }} />
       </div>
 
       <div className="widget-body">

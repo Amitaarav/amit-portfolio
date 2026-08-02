@@ -43,7 +43,7 @@ export const projects: ProjectsConfig = {
       title: "MoneyTxn – P2P Wallet",
       description: "ACID-compliant P2P transaction layer with PostgreSQL row-level locking, BullMQ async reconciliation, and HMAC-SHA256 request signing.",
       tech: ["Next.js", "Express", "PostgreSQL", "Prisma", "BullMQ"],
-      link: "https://github.com/Amitaarav/MoneyTxn",
+      link: "https://github.com/Amitaarav/MoneyTxn/tree/master",
     },
     {
       title: "TriggerHub – Workflow Automation",

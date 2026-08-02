@@ -42,7 +42,7 @@ export default function NowPlaying() {
     const fetch_ = () =>
       fetch("/api/spotify").then((r) => r.json()).then(setData).catch(() => {})
     fetch_()
-    const id = setInterval(fetch_, 30_000)
+    const id = setInterval(fetch_, 5_000)
     return () => clearInterval(id)
   }, [])
 
