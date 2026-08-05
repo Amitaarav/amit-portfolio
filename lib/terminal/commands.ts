@@ -33,7 +33,7 @@ export interface RunContext {
 export const ALL_COMMANDS = [
   "help", "whoami", "ls", "cat", "cd", "pwd", "date", "echo",
   "open", "neofetch", "ping", "clear", "history", "man", "sudo",
-  "curl", "env", "which", "exit",
+  "curl", "env", "which", "exit", "doc"
 ] as const
 
 export const SECTIONS = ["about", "experience", "projects", "blogs", "contact", "resume", "uses", "notes"] as const
@@ -52,6 +52,7 @@ export const MANPAGES: Record<string, string[]> = {
   which:    ["which <cmd>", "Locate a command."],
   curl:     ["curl <url>", "Transfer data from a URL."],
   exit:     ["exit", "Close the terminal."],
+  doc:      ["doc", "Display documentation and help guides."],
 }
 
 export function run(raw: string, ctx: RunContext): Line[] {
@@ -89,7 +90,11 @@ export function run(raw: string, ctx: RunContext): Line[] {
         out("  sudo <cmd>          Superuser"),
         out("  clear               Clear terminal (Ctrl+L)"),
         out("  exit                Close terminal (Ctrl+D)"),
+        out("  doc                 Read documentation"),
       ]
+
+    case "doc":
+      return terminalData.docText.map((l) => (l === "" ? blank : out(l)))
 
     case "whoami":
       return terminalData.whoami.map((l) => (l === "" ? blank : out(l)))

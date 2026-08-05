@@ -22,6 +22,8 @@ export interface TerminalConfig {
   whoami: string[]
   /** Fake JSON returned by `curl github.com/<user>`. */
   githubJson: string
+  /** Content printed by the `doc` command. */
+  docText: string[]
 }
 
 export const terminal: TerminalConfig = {
@@ -65,4 +67,18 @@ export const terminal: TerminalConfig = {
     "with Go, Node.js, TypeScript & Kafka.",
   ],
   githubJson: `{"login":"Amitaarav","name":"Amit Kumar Gupta","bio":"Full Stack & Backend Engineer","public_repos":104}`,
+  docText: [
+    "Portfolio Documentation",
+    "───────────────────────",
+    "Welcome to the terminal interface! This environment supports basic UNIX",
+    "commands like cd, ls, cat, echo, pwd, clear, and more.",
+    "",
+    "Tips:",
+    " - Use `help` to see all available commands.",
+    " - You can navigate the virtual file system with `cd` and `ls`.",
+    " - Read files with `cat` to discover more about my experience.",
+    " - You can open graphical windows using the `open` command.",
+    "",
+    "Have fun exploring the system!"
+  ],
 }
