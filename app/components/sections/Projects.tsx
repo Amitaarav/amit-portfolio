@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowUpRight, Star } from "lucide-react"
+import { ArrowUpRight, Star, Github, ExternalLink } from "lucide-react"
 import { motion } from "framer-motion"
 // Project lists live in /config/projects.ts.
 import { projects, type ProjectItem } from "@/config/projects"
@@ -10,11 +10,8 @@ function ProjectList({ projects }: { projects: ProjectItem[] }) {
   return (
     <div>
       {projects.map((p, i) => (
-        <motion.a
+        <motion.div
           key={i}
-          href={p.link}
-          target="_blank"
-          rel="noopener noreferrer"
           className="group flex items-start justify-between gap-4 py-4"
           style={{
             borderTop: i === 0 ? "1px solid var(--separator)" : undefined,
@@ -26,7 +23,7 @@ function ProjectList({ projects }: { projects: ProjectItem[] }) {
         >
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="text-[13px] font-semibold text-white group-hover:text-white/75 transition-colors">
+              <span className="text-[13px] font-semibold text-white">
                 {p.title}
               </span>
               {p.stars !== undefined && (
@@ -57,12 +54,24 @@ function ProjectList({ projects }: { projects: ProjectItem[] }) {
               {p.tech.join(" · ")}
             </p>
           </div>
-          <ArrowUpRight
-            size={14}
-            className="flex-none mt-0.5 opacity-0 group-hover:opacity-60 transition-opacity"
-            style={{ color: "white" }}
-          />
-        </motion.a>
+          <div className="flex items-center gap-3 mt-0.5">
+            {p.github && (
+              <a href={p.github} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity" style={{ color: "white" }}>
+                <Github size={15} />
+              </a>
+            )}
+            {p.live && (
+              <a href={p.live} target="_blank" rel="noopener noreferrer" className="opacity-40 hover:opacity-100 transition-opacity" style={{ color: "white" }}>
+                <ExternalLink size={15} />
+              </a>
+            )}
+            {p.link && !p.live && !p.github && (
+              <a href={p.link} target="_blank" rel="noopener noreferrer" className="opacity-0 group-hover:opacity-60 hover:!opacity-100 transition-opacity" style={{ color: "white" }}>
+                <ArrowUpRight size={15} />
+              </a>
+            )}
+          </div>
+        </motion.div>
       ))}
     </div>
   )
