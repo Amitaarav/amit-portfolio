@@ -38,6 +38,13 @@ export const projects: ProjectsConfig = {
       live: "https://youtu.be/kPnwJ3iTnn8",
     },
     {
+      title: "Spendly (Fullstack)",
+      description: "Built a credit-card rewards dashboard handling 10K+ transactions end to end. Hand-built a dependency-free table with server-side filtering, sorting, and pagination — no UI library. Designed a coin-based rewards engine with row-level locking (SELECT FOR UPDATE) to guarantee atomic redemptions under concurrent requests, backed by an append-only ledger for auditability. Wrote a normalization pipeline resolving 5 inconsistent timestamp formats and other real-world data-quality issues found in the source dataset. Shipped via GitHub Actions pipelines that gate production deploys behind passing tests/builds on both services.",
+      tech: ["Next.js", "TypeScript", "FastAPI", "PostgreSQL", "psycopg", "GitHub Actions"],
+      github: "https://github.com/Amitaarav/spendly-app",
+      live: "https://spendly-henna-phi.vercel.app/",
+    },
+    {
       title: "TriggerHub: Workflow Automation (Fullstack)",
       description: "Architected an event-driven automation platform for high-volume webhook processing. Features a drag-and-drop workflow builder via React Flow and a resilient Kafka-based pipeline ensuring 99.99% message delivery reliability across 100K+ daily triggers.",
       tech: ["Node.js", "Next.js", "TypeScript", "Postgres", "Kafka", "ReactFlow", "solana/web3.js", "Tailwind CSS", "nodemailer"],
