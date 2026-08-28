@@ -29,8 +29,8 @@ export interface ExperienceItem {
 export const experience: ExperienceItem[] = [
   {
     company: "Milanam",
-    role: "Full Stack Web Developer (Part-time)",
-    period: "Sep 2025 – April 2026",
+    role: "Full Stack Web Developer",
+    period: "Sep 2025 – present",
     description: "Founding engineer on a two-sided hyperlocal service marketplace, owning UI design to backend architecture.",
     tech: ["React", "TypeScript", "Next.js", "Node.js", "AWS", "Turborepo"],
     achievements: [
