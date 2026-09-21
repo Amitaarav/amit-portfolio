@@ -1,0 +1,902 @@
+---
+title: "WAL Shipping: How One Database Teaches Another to Become Its Copy"
+date: "2026-09-21"
+description: "A plain-English walkthrough of WAL shipping and physical replication — from crash recovery and append-only logs to replication lag, version compatibility, and why the replication mechanism matters operationally."
+tags: ["system-design", "databases", "replication", "distributed-systems", "wal"]
+---
+
+Let's start with a database that has absolutely no idea what replication is.
+
+It only knows one thing:
+
+**Someone changed the data.**
+
+Maybe a user created an account.
+
+Maybe an order was placed.
+
+Maybe a balance changed from `₹1000` to `₹700`.
+
+The database has to remember that change reliably, even if the machine suddenly loses power.
+
+So before we talk about replication, we need to understand a much simpler idea:
+
+**the database keeps a log of what happened.**
+
+And that log turns out to be useful for something much bigger than crash recovery.
+
+It can become the thing that teaches another database how to become a copy.
+
+That's **WAL shipping**.
+
+---
+
+## Before replication: why does a database need a log?
+
+Imagine a database storing this:
+
+```text
+Account #42
+
+balance = 1000
+```
+
+A request arrives:
+
+```sql
+UPDATE accounts
+SET balance = 700
+WHERE id = 42;
+```
+
+At some point, the database needs to modify the data on disk.
+
+But writing directly to the data files creates a problem.
+
+What happens if the machine crashes halfway through?
+
+```text
+Start writing
+      |
+      v
+Modify database pages
+      |
+      |
+      X
+    CRASH
+```
+
+The database might now have a partially completed change.
+
+That's not something you want to discover when the server starts again.
+
+So databases commonly use a **write-ahead log**, or WAL.
+
+The basic idea is simple:
+
+> **Record the change in the log before relying on the actual data pages to be durable.**
+
+Conceptually:
+
+```text
+Client request
+      |
+      v
+Write WAL
+      |
+      v
+Persist WAL
+      |
+      v
+Modify database pages
+```
+
+Now suppose the machine crashes.
+
+When it comes back:
+
+```text
+Database starts
+      |
+      v
+Read WAL
+      |
+      v
+Replay changes
+      |
+      v
+Recover consistent state
+```
+
+The log gives the database a history it can use to recover.
+
+And that is where replication gets interesting.
+
+---
+
+## The log was already there
+
+Here's the part I find beautiful about this design.
+
+The database already has a sequence of changes:
+
+```text
+WAL
+
+change 1
+change 2
+change 3
+change 4
+change 5
+```
+
+The database uses it for itself.
+
+Why not send those same changes to another machine?
+
+Instead of:
+
+```text
+Leader
+   |
+   | crash
+   v
+Replay WAL
+```
+
+we can also do:
+
+```text
+Leader
+   |
+   | WAL
+   v
+Follower
+   |
+   v
+Replay WAL
+```
+
+The follower processes the same sequence of changes.
+
+If everything lines up correctly, it ends up with the same database state.
+
+That's **WAL shipping**.
+
+---
+
+## The simplest picture of WAL shipping
+
+Let's say we have two database servers:
+
+```text
+             Leader
+          +-----------+
+          | Database  |
+          |           |
+          |    WAL    |
+          +-----+-----+
+                |
+                | WAL records
+                v
+          +-----------+
+          | Follower  |
+          |           |
+          | Replay WAL|
+          +-----------+
+```
+
+The leader handles writes.
+
+Every write produces WAL records.
+
+Those records are sent over the network.
+
+The follower receives them and replays them.
+
+The follower is therefore not receiving a giant copy of the database every time something changes.
+
+It's receiving the **stream of changes**.
+
+---
+
+## Think of the WAL as a history book
+
+Here's an analogy that makes this easier.
+
+Imagine you have a notebook containing every change you've made to a spreadsheet.
+
+You don't write:
+
+```text
+Current spreadsheet = 500 MB
+```
+
+every time something changes.
+
+Instead, you write:
+
+```text
+10:01 — Added user 42
+10:02 — Renamed user 42
+10:03 — Created order 1001
+10:04 — Updated order 1001
+```
+
+Now give the notebook to another person.
+
+They start with the same initial spreadsheet.
+
+Then they apply the changes in order:
+
+```text
+Initial state
+    |
+    +--> Change 1
+    |
+    +--> Change 2
+    |
+    +--> Change 3
+    |
+    +--> Change 4
+    |
+    v
+Final state
+```
+
+If they apply the same changes correctly, they arrive at the same result.
+
+That's roughly the mental model behind log-based replication.
+
+---
+
+## But there is an important detail: what exactly is inside the WAL?
+
+This is where things become more interesting.
+
+You might imagine the WAL contains something nice and readable like:
+
+```sql
+UPDATE users
+SET name = 'Amit'
+WHERE id = 42;
+```
+
+But that's not necessarily what a physical WAL looks like.
+
+A WAL can contain **low-level storage information**.
+
+Conceptually, it might describe something closer to:
+
+```text
+page = 42
+offset = 128
+change these bytes
+```
+
+The exact representation depends on the database.
+
+And this distinction matters enormously.
+
+Because now the follower isn't just learning:
+
+> "A user's name changed."
+
+It's learning:
+
+> "Modify this database page according to this storage-engine operation."
+
+That means the follower needs to understand the leader's storage format.
+
+---
+
+## This is physical replication
+
+When the replication stream describes low-level changes to the database's physical storage, we're talking about **physical replication**.
+
+The flow looks roughly like this:
+
+```text
+Leader
+  |
+  | physical WAL records
+  v
+Follower
+  |
+  | replay
+  v
+Same storage structures
+```
+
+The follower is effectively rebuilding the same internal structures as the leader.
+
+That could include things like:
+
+```text
+data pages
+indexes
+B-trees
+page layouts
+record formats
+storage metadata
+```
+
+The exact details depend on the database.
+
+And this creates a very important property:
+
+> **Physical replication is closely coupled to the storage engine.**
+
+---
+
+## Why does that coupling matter?
+
+Suppose you have database version 1.
+
+It stores records one way:
+
+```text
+[ID][NAME][AGE]
+```
+
+Later, database version 2 changes the internal representation:
+
+```text
+[ID][FLAGS][NAME][AGE]
+```
+
+Now imagine the WAL says:
+
+```text
+"Modify these bytes at this location."
+```
+
+A follower running version 2 might not interpret those bytes the same way.
+
+So this:
+
+```text
+Leader v1
+    |
+    | WAL
+    v
+Follower v2
+```
+
+may not be safe.
+
+The problem isn't that the data is different.
+
+The problem is that the **language used by the replication stream is tied to the internal storage representation**.
+
+That's the operational cost of physical replication.
+
+---
+
+## This is why logical replication is different
+
+Now imagine the leader sends:
+
+```text
+INSERT user  id=42  name="Amit"
+UPDATE account  id=42  balance=700
+```
+
+The follower doesn't necessarily need to understand exactly how the leader stores those bytes on disk.
+
+It just needs to understand the **meaning of the operation**.
+
+That's the difference between the two approaches.
+
+| | Physical replication | Logical replication |
+|---|---|---|
+| Sends | Low-level storage changes | Database-level operations |
+| Coupling | Tied to storage engine internals | Tied to data semantics |
+| Cross-version safety | More fragile | More robust |
+
+Physical replication is a natural fit for keeping two instances of the *same* engine in sync. Logical replication trades some of that low-level coupling for abstraction from storage internals.
+
+Neither is automatically "better."
+
+The real question is:
+
+> **What replication semantics does this system actually need?**
+
+---
+
+## Replication is a stream, not a photocopier
+
+This is one of the most important things to understand early.
+
+A follower is not necessarily an instantaneous mirror.
+
+If the leader has produced WAL entries up to position `104`, and the follower has only replayed up to `102`:
+
+```text
+Leader:   100 101 102 103 104
+Follower: 100 101 102
+```
+
+the follower is **behind**.
+
+That gap is **replication lag**.
+
+The follower is continuously catching up to a moving stream, not sitting at a fixed snapshot.
+
+---
+
+### LSNs, in plain terms
+
+You'll often see **LSN** (Log Sequence Number) mentioned.
+
+Don't overthink it.
+
+Treat it as a position marker in the WAL stream, like a page number in the history book.
+
+If the leader is at LSN `1003` and the follower has replayed up to LSN `1000`, the follower is behind.
+
+The exact encoding varies by database.
+
+The useful idea is simply:
+
+> **How far has the follower progressed through the log?**
+
+---
+
+## "The follower received the write" has several possible meanings
+
+Be precise about which stage you mean:
+
+```text
+Leader generates WAL
+        ↓
+WAL sent over network
+        ↓
+Follower receives WAL
+        ↓
+Follower persists WAL
+        ↓
+Follower replays WAL
+        ↓
+Follower's state changes
+        ↓
+Read becomes visible
+```
+
+These are distinct moments, not one event.
+
+And the gap between them is exactly what determines:
+
+- replication lag
+- durability
+- failover behavior
+- read-after-write consistency
+
+This distinction becomes more important as you move from basic replication into production system design.
+
+---
+
+## Asynchronous vs. synchronous replication
+
+### Asynchronous replication
+
+The leader acknowledges the client without waiting for the follower.
+
+```text
+Client → Leader → commit → "success" to client
+                  ↓
+            WAL → Follower
+```
+
+This can make writes faster because the leader doesn't have to wait for another machine.
+
+But there's a window where a write has been acknowledged to the client yet hasn't reached a replica.
+
+If the leader dies in that window, the write can be lost during failover.
+
+So asynchronous replication gives you:
+
+```text
+lower write latency
+less waiting
+possible loss of recent acknowledged writes
+```
+
+---
+
+### Synchronous replication
+
+The leader waits for a follower to confirm persistence before acknowledging the client.
+
+```text
+Client → Leader → WAL → Follower
+                           |
+                       persisted
+                           |
+                           v
+                        Leader
+                           |
+                           v
+                    "success" to client
+```
+
+Now the system has stronger cross-replica durability.
+
+But the write depends on the follower responding.
+
+If the follower is slow:
+
+```text
+Client
+  |
+  v
+Leader
+  |
+  | waiting...
+  v
+Follower
+```
+
+the client's write can become slower too.
+
+So the trade-off becomes:
+
+```text
+Asynchronous
+    |
+    +--> lower latency
+    +--> less waiting
+    +--> possible recent-write loss
+
+Synchronous
+    |
+    +--> stronger cross-replica durability
+    +--> higher write latency
+    +--> depends on replica availability
+```
+
+There is no free lunch here.
+
+---
+
+## Why this matters during failover
+
+Suppose:
+
+```text
+Leader
+LSN 1050
+
+Follower
+LSN 1045
+```
+
+The leader dies.
+
+The follower gets promoted.
+
+But the follower only knows about changes up to LSN `1045`.
+
+The changes between:
+
+```text
+1046 → 1050
+```
+
+may simply not exist on the new leader.
+
+So failover isn't just:
+
+> "Pick another machine."
+
+You need to know:
+
+- how far each replica has progressed
+- which writes were durable
+- which writes were only acknowledged
+- which replica is safe to promote
+- what happens to writes that never reached the promoted replica
+
+This is where replication design connects directly to **RPO**, or Recovery Point Objective.
+
+---
+
+## Replication is also an operational feature
+
+It's tempting to think about replication purely as:
+
+```text
+Leader dies
+    |
+    v
+Follower takes over
+```
+
+In practice, replication also shapes:
+
+- availability
+- read scaling
+- disaster recovery
+- failover procedures
+- software upgrades
+
+The software-version example is especially important.
+
+---
+
+## Rolling upgrades and replication compatibility
+
+Picture a production system:
+
+```text
+             Leader v1
+             /       \
+            /         \
+     Follower v1   Follower v1
+```
+
+You want to upgrade everything to version 2.
+
+If version 2 can safely replay version 1's WAL, you can potentially upgrade followers first:
+
+```text
+             Leader v1
+             /       \
+            /         \
+     Follower v2   Follower v2
+```
+
+The old leader continues serving traffic.
+
+Then you can promote an upgraded follower:
+
+```text
+             Leader v2
+                 |
+                 v
+             Follower v2
+```
+
+And finally upgrade the former leader.
+
+This is the basic idea behind a rolling upgrade.
+
+---
+
+## But incompatible replication changes everything
+
+If version 2 cannot understand the WAL produced by version 1:
+
+```text
+Leader v1
+    |
+    | incompatible WAL
+    X
+Follower v2
+```
+
+you can't safely use the same rolling-upgrade strategy.
+
+The upgrade has to be coordinated some other way.
+
+Depending on the database and migration strategy, that may mean downtime or a more involved migration process.
+
+This is why replication compatibility is not a minor implementation detail.
+
+It directly affects:
+
+> **how you can operate the system in production.**
+
+---
+
+## The core idea: replaying history, not copying state
+
+Here's the mental model worth keeping.
+
+The leader starts with some state:
+
+```text
+Initial state
+```
+
+Then it processes operations:
+
+```text
+Initial state
+    |
+    +--> op1
+    |
+    +--> op2
+    |
+    +--> op3
+    |
+    +--> op4
+    |
+    v
+Final state
+```
+
+The follower starts from the same compatible state and processes the same sequence:
+
+```text
+Initial state
+    |
+    +--> op1
+    |
+    +--> op2
+    |
+    +--> op3
+    |
+    +--> op4
+    |
+    v
+Final state
+```
+
+The follower isn't handed the final state.
+
+It's handed the **history that produces it**.
+
+That's why logs are such a foundational primitive in distributed systems.
+
+You see the same broad pattern in:
+
+- database WAL
+- Kafka's append-only log
+- replicated state machines
+- event-sourced systems
+
+The guarantees and implementations are different, but the underlying idea is similar:
+
+> **Keep an ordered history of changes, and use that history to reconstruct or maintain state elsewhere.**
+
+---
+
+## Two common misconceptions
+
+### "The follower just copies the database."
+
+Not quite.
+
+A full snapshot copy and WAL-based replication are different mechanisms.
+
+Snapshot copying transfers the entire state at a point in time:
+
+```text
+Leader database
+      |
+      | copy state
+      v
+Follower
+```
+
+WAL shipping lets the follower continuously track the leader:
+
+```text
+Leader
+   |
+   | change 1
+   | change 2
+   | change 3
+   | change 4
+   v
+Follower
+   |
+   v
+Replay changes
+```
+
+The follower doesn't need the entire database copied again for every change.
+
+---
+
+### "Replication means zero data loss."
+
+Not automatically.
+
+Under asynchronous replication, a write can be acknowledged to the client before it reaches any follower.
+
+If the leader dies at exactly that moment, the write may be lost during failover.
+
+Synchronous replication can provide stronger guarantees, but the exact guarantee depends on what the system waits for and how failover is implemented.
+
+So whenever someone says:
+
+> "We have replicas."
+
+the useful follow-up question is:
+
+> **When is a write actually considered safe?**
+
+---
+
+## Three questions worth asking about any replication system
+
+Whenever you see a replication architecture, ask these three questions.
+
+### 1. What is being replicated?
+
+Is it:
+
+```text
+Physical storage changes?
+Logical database operations?
+Application events?
+Commands?
+```
+
+### 2. When is replication considered complete?
+
+Is it when the WAL is:
+
+```text
+generated?
+sent?
+received?
+persisted?
+replayed?
+visible to reads?
+```
+
+### 3. What happens if the leader disappears right now?
+
+Ask:
+
+```text
+Which writes survive?
+Which replica gets promoted?
+How much data can be lost?
+How much replication lag exists?
+```
+
+These questions reveal most of what matters about a replication architecture.
+
+---
+
+## The bigger picture
+
+WAL shipping looks like a database implementation detail at first glance.
+
+It's really a specific case of a much broader idea:
+
+```text
+                 Change stream
+                      |
+           ┌──────────┴──────────┐
+           ▼                     ▼
+       Recovery              Replication
+           |                     |
+     Same machine          Other machine
+```
+
+The database already keeps a history of changes for its own recovery.
+
+Replication simply reuses that history to keep another machine current.
+
+And from there, everything else follows:
+
+```text
+WAL
+ |
+ +--> replication
+ |
+ +--> replication lag
+ |
+ +--> synchronous vs. asynchronous replication
+ |
+ +--> failover
+ |
+ +--> RPO
+ |
+ +--> read-after-write consistency
+ |
+ +--> version compatibility
+ |
+ +--> rolling upgrades
+```
+
+The concept worth keeping, more than any specific vendor detail, is this:
+
+> **A database can turn its internal sequence of changes into a replication stream. A follower consumes that stream and reconstructs the same state.**
+
+Once replication is understood as a **stream of changes rather than a copied database**, lag, consistency, durability, and compatibility stop being separate topics and start fitting together as one coherent model.
