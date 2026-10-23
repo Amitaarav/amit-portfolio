@@ -52,11 +52,11 @@ export const projects: ProjectsConfig = {
       live: "https://youtu.be/jo1lq8KTzI4",
     },
     {
-      title: "BlogSphere: Edge-Optimized Platform",
+      title: "BlogWeb: Edge-Optimized Platform",
       description: "Built a high-performance blogging engine using Cloudflare Workers and Hono for edge deployment. Leveraged Prisma Accelerate for optimized database queries, ensuring sub-100ms response times. Features include secure JWT authentication, rich text editing, and image management.",
-      tech: ["Hono (Edge)", "Prisma Accelerate", "JWT", "React", "Vite", "Redux", "Tailwind CSS"],
+      tech: ["Hono (Edge)", "Prisma", "Postgres", "JWT", "React", "Vite", "Redux", "Tailwind CSS"],
       github: "https://github.com/Amitaarav/BlogWeb",
-      live: "https://github.com/Amitaarav/BlogWeb",
+      live: "https://blog-web-9ak5.vercel.app/",
     },
     {
       title: "Vector Shift Automation",
