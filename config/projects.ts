@@ -61,7 +61,7 @@ export const projects: ProjectsConfig = {
     {
       title: "Vector Shift Automation",
       description: "Created a visual workflow automation tool for analyzing graph-based systems. Used React Flow for dynamic node-link diagrams and FastAPI for backend logic, enabling real-time counting and validation of complex graph structures.",
-      tech: ["JavaScript", "Reactjs", "React-flow", "Fast-API"],
+      tech: ["JavaScript", "React.js", "React Flow", "FastAPI"],
       github: "https://github.com/Amitaarav/vector-flow",
       live: "https://youtu.be/l8Y3n6ZQrgo",
     },
@@ -77,19 +77,26 @@ export const projects: ProjectsConfig = {
     {
       title: "AI Camera Surveillance Platform",
       description: "Engineered a scalable, distributed worker platform for real-time camera supervision using Go and Redis Streams. Architected a 4-plane event-driven system featuring WebRTC egress for low-latency streaming, deployed seamlessly on Kubernetes. Integrated YOLOv8 inference in Python to ensure accurate and instantaneous threat detection across multiple concurrent video feeds.",
-      tech: ["Go", "TypeSctrip", "Redis Streams", "Kubernetes", "WebRTC", "Python"],
+      tech: ["Go", "TypeScript", "Redis Streams", "Kubernetes", "WebRTC", "Python", "YOLOv8"],
       github: "https://github.com/Amitaarav/Camera-surveillance",
-      live: "https://github.com/Amitaarav/ai-camera-surveillance",
+      live: "https://github.com/Amitaarav/Camera-surveillance",
     },
     {
       title: "Real-Time Exchange Platform",
       description: "Designed a high-frequency trading engine supporting 10K+ orders/sec with <50ms latency. Implemented Redis Pub/Sub for rapid order matching and WebSockets for live market data feeds, backed by TimescaleDB for time-series analytics.",
-      tech: ["TypeScript", "Express.js", "Redis", "WebSockets", "TimescaleDB"],
+      tech: ["TypeScript", "Rust", "Express.js", "Redis", "WebSockets", "TimescaleDB"],
       github: "https://github.com/Amitaarav/exchange-app",
       live: "https://github.com/Amitaarav/exchange-app",
     },
 
     // --- SOLANA & BLOCKCHAIN ---
+    {
+      title: "Solana Address Book",
+      description: "Built a full-stack Solana developer toolkit — a contact directory API paired with on-chain cryptographic utilities. Backend in Express.js + TypeScript with Zod-validated endpoints for CRUD contact management, ATA derivation via PublicKey.findProgramAddressSync, dynamic multi-seed PDA calculation with Pubkey and UTF-8 seed support, and Ed25519 detached signature verification using tweetnacl. Frontend in React 18 + Vite with components for the address directory, ATA deriver, PDA calculator, and signature verifier. Live at solana-address-book.vercel.app.",
+      tech: ["TypeScript", "Express.js", "React", "Vite", "Solana Web3.js", "tweetnacl", "Zod", "Tailwind CSS"],
+      github: "https://github.com/Amitaarav/solana-address-book",
+      live: "https://solana-address-book.vercel.app/",
+    },
     {
       title: "Aarav Wallet – Multi-Chain HD Wallet",
       description: "Built a non-custodial multi-chain HD wallet supporting Solana and Ethereum from a single BIP39 mnemonic — BIP44 derivation with Ed25519 (m/44'/501') for Solana and Secp256k1 (m/44'/60') for Ethereum, live SOL/USDC balance fetching via Solana RPC, and in-browser transaction signing with zero key persistence — private keys never leave browser memory, no backend, no localStorage, no telemetry.",
@@ -122,7 +129,7 @@ export const projects: ProjectsConfig = {
     },
     {
       title: "Artistly.com (Frontend)",
-      description: "Developed a pixel-perfect, responsive frontend for an artist booking platform. Utilized modern React patterns, Shadcn UI components, and Zod validation to creating a seamless booking experience and scalable codebase.",
+      description: "Developed a pixel-perfect, responsive frontend for an artist booking platform. Utilized modern React patterns, Shadcn UI components, and Zod validation to create a seamless booking experience and scalable codebase.",
       tech: ["Next.js (App Router)", "React", "Tailwind CSS", "shadcn/ui", "React Hook Form", "Zod"],
       github: "https://github.com/Amitaarav/artistly.com",
       live: "https://artistly-com-abof.vercel.app/",
@@ -140,7 +147,7 @@ export const projects: ProjectsConfig = {
       tech: ["React 19", "TypeScript", "Vite", "Redux Toolkit", "Tailwind CSS 4"],
       github: "https://github.com/Amitaarav/MiniNUA",
       live: "https://mini-nua.vercel.app/",
-    }
+    },
   ],
 
   client: [
@@ -152,9 +159,9 @@ export const projects: ProjectsConfig = {
       live: "https://milanam.com",
     },
     {
-      title: "Tedekstra UI Dashboard",
-      description: "Real-time analytics dashboards integrated with NestJS backend APIs via typed DTO contracts and global exception filters.",
-      tech: ["React.js", "NestJS", "Zustand"],
+      title: "Tedekstra CRM",
+      description: "Full CRM in NestJS with WhatsApp Business API and Meta API for lead capture, bulk CSV ingestion pipelines, RBAC across 4+ user tiers, and Azure Blob Storage + Notification Hub. Modernised legacy UI to Next.js with React Query caching.",
+      tech: ["NestJS", "React.js", "Next.js", "Azure", "Zustand", "React Query"],
       github: "https://tedekstra.com",
       live: "https://tedekstra.com",
     },
@@ -183,5 +190,9 @@ export const resumeProjects: ResumeProjectItem[] = [
   {
     name: "TriggerHub – Distributed Workflow Automation",
     desc: "Implemented Transactional Outbox Pattern with Apache Kafka, guaranteeing strict ordering across microservices processing 100K+ events/day.",
+  },
+  {
+    name: "Solana Address Book",
+    desc: "Full-stack Solana developer toolkit with Express.js + React — ATA derivation, multi-seed PDA calculation, and Ed25519 signature verification via tweetnacl.",
   },
 ]
