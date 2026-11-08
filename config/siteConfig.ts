@@ -153,6 +153,12 @@ export const siteConfig: SiteConfig = {
         label: "LinkedIn",
         mono: "in/amitkrgupta8",
       },
+      {
+        icon: "x",
+        href: "https://x.com/AmitAarav1205",
+        label: "X",
+        mono: "@AmitAarav1205",
+      },
     ],
   },
 
@@ -166,7 +172,7 @@ export const siteConfig: SiteConfig = {
   },
 
   resumeLink:
-    "https://drive.google.com/file/d/1xkX-Jd0rwaIs-uNFMOwU8iQdgvlvlyPO/view?usp=sharing",
+    "https://drive.google.com/file/d/1Wy6wW76q_LtTgeCIWrmYl8eJK03qXP5B/view?usp=sharing",
 
   features: {
     konami: true,
