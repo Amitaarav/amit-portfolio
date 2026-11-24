@@ -118,6 +118,13 @@ export const projects: ProjectsConfig = {
       github: "https://github.com/Amitaarav/DappA",
       live: "https://dapp-a.vercel.app/",
     },
+    {
+      title: "Solana Non-Custodial Personal Vault",
+      description: "Built a security-first, non-custodial personal vault on Solana in Rust and Anchor, with each vault derived as a PDA from the owner's key (seeds [b\"vault\", owner]) for trustless 1:1 custody. Enforced on-chain per-transaction withdrawal caps, a pause/resume circuit breaker, and rent-exempt reserve protection, with fully checked arithmetic and custom error codes. Emits typed DepositEvent/WithdrawEvent for client-side indexing and supports clean vault closure with rent reclamation. Covered by a 17-case Mocha/Chai suite and paired with a Next.js dashboard.",
+      tech: ["Rust", "Anchor", "Solana", "TypeScript", "Next.js", "Tailwind CSS", "Mocha"],
+      github: "https://github.com/Amitaarav/solana-vault",
+      live: "https://github.com/Amitaarav/solana-vault",
+    },
 
     // --- FRONTEND ---
     {
